@@ -6,7 +6,6 @@ public class Partidas
     // Atributos de la clase
     public int IdPartidas{get; set;}
     public int IdJugadores{get; set;}
-    public int IdSalas{get; set;}
     public TimeSpan Tiempo{get; set;}
     public int Errores{get; set;}
     public int PistasSolicitadas{get; set;}
@@ -16,7 +15,6 @@ public class Partidas
     {
         IdPartidas = idPartidas;
         IdJugadores = idJugadores;
-        IdSalas = idSalas;
         Tiempo = tiempo;
         Errores = errores;
         PistasSolicitadas = pistasSolicitadas;
