@@ -29,13 +29,6 @@ public class SalaController : Controller
         ViewBag.TipoRecurso = recurso.TipoRecurso;
         return View();
     }
-    
-    public IActionResult GetSala(int idSalas)
-    {
-        BD miBd = new BD();
-        Salas miSala = miBd.GetSala(idSalas);
-        return View(miSala);
-    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
