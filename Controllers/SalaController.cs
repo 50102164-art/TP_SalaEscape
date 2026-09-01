@@ -15,9 +15,11 @@ public class SalaController : Controller
 
     public IActionResult Index()
     {
-        int partidaId = HttpContext.Session.GetInt32("PartidaId");
-        Salas salaActual = BD.GetSalaActual(partidaId);   // método Dapper
-        Recurso recurso = BD.GetRecurso(salaActual.IdRecurso); // método Dapper para obtener el recurso asociado a la sala actual
+        BD miBd = new BD();
+        int partidaId;
+        partidaId = HttpContext.Session.GetInt32("PartidaId").Value;
+        Salas salaActual = miBd.GetSalaActual(partidaId);   // método Dapper
+        Recurso recurso = miBd.GetRecurso(salaActual.IdRecurso); // método Dapper para obtener el recurso asociado a la sala actual
         ViewBag.Id = salaActual.IdSalas;
         ViewBag.Nombre = salaActual.Nombre;
         ViewBag.Nivel = salaActual.Nivel;

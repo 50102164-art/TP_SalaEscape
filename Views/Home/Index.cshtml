@@ -2,6 +2,9 @@
     ViewData["Title"] = "Home Page";
 }
 
+
+
+
 @if (ViewBag.TipoRecurso == "video")
 {
     <video autoplay muted loop class="fondo">
@@ -12,3 +15,17 @@ else
 {
     <img src="@ViewBag.RecursoUrl" class="fondo"/>
 }
+
+<!-- Hacer un form en donde un input text deba ser completado y que el botón lleve a un JS donde se hagan verificaciones antes de pasar a la siguiente sala, y que si no se cumplen las condiciones, no se pueda avanzar a la siguiente sala hasta que se cumplan.-->
+<form method="post" asp-controller="Sala" asp-action="SiguienteSala">
+    @if(ViewBag.IdSalas == 0){
+        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingrese su nombre" required />
+        <button type="submit" class="btn btn-primary" onclick=Url.Action("SiguienteSala", "Sala")>Enviar</button>
+    }
+    else{ 
+        <input type="text" name="respuesta" id="respuesta" class="form-control" placeholder="Ingrese la clave" required />
+        <button type="button" class="btn btn-primary" onclick="return verificarCondiciones();">Enviar</button>
+    }
+</form> 
+
+

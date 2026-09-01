@@ -5,12 +5,14 @@ public class Jugadores
 {
     // Atributos de la clase
     public int IdJugadores{get; set;}
+    public int IdPartida{get; set;}
     public string Nombre{get; set;}
 
     // Constructor de la clase
-    public Jugadores(int idJugadores, string nombre)
+    public Jugadores(int idJugadores, int idPartida, string nombre)
     {
         IdJugadores = idJugadores;
+        IdPartida = idPartida;
         Nombre = nombre;
     }
 
