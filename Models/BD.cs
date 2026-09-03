@@ -23,6 +23,15 @@ public class BD{
         }
     }
 
+    public Jugadores GetJugador(int idPartida)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var query = "SELECT TOP 1 * FROM Jugadores WHERE IdPartidas = @IdPartida";
+            return connection.QueryFirstOrDefault<Jugadores>(query, new { IdPartida = idPartida });
+        }
+    }
+
     public int CrearPartida()
     {
         using (var connection = new SqlConnection(_connectionString))

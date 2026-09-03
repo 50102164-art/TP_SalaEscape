@@ -20,6 +20,10 @@ public class SalaController : Controller
         partidaId = HttpContext.Session.GetInt32("PartidaId").Value;
         Salas salaActual = miBd.GetSalaActual(partidaId);   // método Dapper
         Recurso recurso = miBd.GetRecurso(salaActual.IdRecurso); // método Dapper para obtener el recurso asociado a la sala actual
+        if(salaActual.Nivel == 6){
+            Jugadores jugador = miBd.GetJugador(partidaId); // método Dapper para obtener el jugador asociado a la partida actual
+            ViewBag.NombreUsuario = jugador.Nombre;
+        }
         ViewBag.Id = salaActual.IdSalas;
         ViewBag.Nombre = salaActual.Nombre;
         ViewBag.Nivel = salaActual.Nivel;
@@ -29,6 +33,12 @@ public class SalaController : Controller
         ViewBag.Pista3 = salaActual.Pista3;
         ViewBag.RecursoUrl = recurso.RecursoUrl;
         ViewBag.TipoRecurso = recurso.TipoRecurso;
+        return View();
+    }
+
+    public IActionResult ReinciarJuego()
+    {
+
         return View();
     }
 

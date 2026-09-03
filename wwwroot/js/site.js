@@ -4,14 +4,23 @@
 // Write your JavaScript code.
 
 function verificarCondiciones(){
-    if(document.getElementById("respuesta").value === "clave_correcta"){
+    const respuesta = document.getElementById("respuesta")?.value.trim();
+
+    if(respuesta === "clave_correcta"){
         return true;
     } 
     else {
-        if(document.getElementById("respuesta").value === "-")
+        if(respuesta === "-")
             alert("Por favor, ingrese una respuesta.");
         else
             alert("Respuesta incorrecta. Inténtalo de nuevo.");
+
         return false;
     }
 }
+
+function cambiarFondo() {
+    let img = document.getElementById("RecursoUrl");
+    document.body.style.backgroundImage = `url('${img.src}')`;
+}
+

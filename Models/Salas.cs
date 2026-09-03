@@ -10,7 +10,6 @@ public class Salas
     public string Pista1{get; set;}
     public string Pista2{get; set;}
     public string Pista3{get; set;}
-    public int IdRecurso{get; set;}
 
     // Constructor de la clase
     public Salas(int idSalas, string nombre, int nivel, string respuestaCorrecta, string pista1, string pista2, string pista3, int idRecurso)
@@ -22,6 +21,5 @@ public class Salas
         Pista1 = pista1;
         Pista2 = pista2;
         Pista3 = pista3;
-        IdRecurso = idRecurso;
     }
 }

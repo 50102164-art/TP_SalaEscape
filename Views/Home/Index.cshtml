@@ -18,14 +18,28 @@ else
 
 <!-- Hacer un form en donde un input text deba ser completado y que el botón lleve a un JS donde se hagan verificaciones antes de pasar a la siguiente sala, y que si no se cumplen las condiciones, no se pueda avanzar a la siguiente sala hasta que se cumplan.-->
 <form method="post" asp-controller="Sala" asp-action="SiguienteSala">
-    @if(ViewBag.IdSalas == 0){
-        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingrese su nombre" required />
-        <button type="submit" class="btn btn-primary" onclick=Url.Action("SiguienteSala", "Sala")>Enviar</button>
+    @if(ViewBag.Nivel == 0){
+        <input type="text" name="nombre" id="respuesta" class="form-control" placeholder="Ingrese su nombre" required />
+        <button type="submit" class="btn btn-primary" onclick=return verificarCondiciones();>Enviar</button>
+    }
+    else if(ViewBag.Nivel == 6){
+        <p>Felicidades, @ViewBag.NombreUsuario. Ganaste</p>
+        <button type="submit" class="btn btn-primary" asp-controller="Sala" asp-action="ReiniciarJuego">Jugar de nuevo</button>
+
+
     }
     else{ 
         <input type="text" name="respuesta" id="respuesta" class="form-control" placeholder="Ingrese la clave" required />
         <button type="button" class="btn btn-primary" onclick="return verificarCondiciones();">Enviar</button>
     }
 </form> 
+
+
+
+<section class= "Sala">
+    <h1>@ViewBag.Nombre</h1>
+    
+</section>
+
 
 
