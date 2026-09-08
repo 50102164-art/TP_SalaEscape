@@ -5,15 +5,13 @@ public class Partidas
 {
     // Atributos de la clase
     public int IdPartidas{get; set;}
-    public TimeSpan Tiempo{get; set;}
     public int Errores{get; set;}
     public int PistasSolicitadas{get; set;}
 
     // Constructor de la clase
-    public Partidas(int idPartidas, int idSalas, TimeSpan tiempo, int errores, int pistasSolicitadas)
+    public Partidas(int idPartidas, int idSalas, int errores, int pistasSolicitadas)
     {
         IdPartidas = idPartidas;
-        Tiempo = tiempo;
         Errores = errores;
         PistasSolicitadas = pistasSolicitadas;
     }

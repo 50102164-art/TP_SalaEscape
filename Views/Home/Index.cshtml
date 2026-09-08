@@ -1,45 +1,172 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = ViewBag.Nombre ?? "Sala";
 }
 
-
-
-
-@if (ViewBag.TipoRecurso == "video")
-{
-    <video autoplay muted loop class="fondo">
-        <source src="@ViewBag.RecursoUrl" type="video/mp4">
-    </video>
-}
-else
-{
-    <img src="@ViewBag.RecursoUrl" class="fondo"/>
-}
-
-<!-- Hacer un form en donde un input text deba ser completado y que el botón lleve a un JS donde se hagan verificaciones antes de pasar a la siguiente sala, y que si no se cumplen las condiciones, no se pueda avanzar a la siguiente sala hasta que se cumplan.-->
-<form method="post" asp-controller="Sala" asp-action="SiguienteSala">
-    @if(ViewBag.Nivel == 0){
-        <input type="text" name="nombre" id="respuesta" class="form-control" placeholder="Ingrese su nombre" required />
-        <button type="submit" class="btn btn-primary" onclick=return verificarCondiciones();>Enviar</button>
-    }
-    else if(ViewBag.Nivel == 6){
-        <p>Felicidades, @ViewBag.NombreUsuario. Ganaste</p>
-        <button type="submit" class="btn btn-primary" asp-controller="Sala" asp-action="ReiniciarJuego">Jugar de nuevo</button>
-
-
-    }
-    else{ 
-        <input type="text" name="respuesta" id="respuesta" class="form-control" placeholder="Ingrese la clave" required />
-        <button type="button" class="btn btn-primary" onclick="return verificarCondiciones();">Enviar</button>
-    }
-</form> 
-
-
-
-<section class= "Sala">
-    <h1>@ViewBag.Nombre</h1>
+<div class="sala-container" style="background-image: url('@ViewBag.RecursoUrl'); background-size: cover; background-position: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; position: relative;">
     
-</section>
+    <!-- Overlay oscuro para mejor legibilidad -->
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.4);"></div>
+    
+    <div style="position: relative; z-index: 10; width: 100%; max-width: 900px;">
+        
+        <!-- Encabezado de la sala -->
+        <div style="text-align: center; color: white; margin-bottom: 30px;">
+            <h1 style="font-size: 2.5em; margin: 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.7);">@ViewBag.Nombre</h1>
+            <p style="font-size: 1.2em; margin: 10px 0 0 0; opacity: 0.9;">Nivel @ViewBag.Nivel</p>
+        </div>
 
+        <!-- Contenedor de pistas (lado izquierdo) -->
+        <div style="display: flex; gap: 40px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
+            
+            <div class="pistas-section" style="flex: 0 1 250px; background: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px; border-left: 4px solid #FFD700;">
+                <h3 style="color: #FFD700; margin-top: 0; text-align: center;">PISTAS</h3>
+                
+                <!-- Pista 1 -->
+                <div style="margin-bottom: 15px;">
+                    <button id="btnPista1" class="btn-pista" onclick="mostrarPista(1)" style="width: 100%; padding: 10px; background-color: #FFD700; color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                        🔍 Pista 1
+                    </button>
+                    <div id="contenidoPista1" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
+                        @ViewBag.Pista1
+                    </div>
+                </div>
 
+                <!-- Pista 2 (Deshabilitada hasta mostrar Pista 1) -->
+                <div style="margin-bottom: 15px;">
+                    <button id="btnPista2" class="btn-pista" onclick="mostrarPista(2)" disabled style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: not-allowed;">
+                        🔍 Pista 2
+                    </button>
+                    <div id="contenidoPista2" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
+                        @ViewBag.Pista2
+                    </div>
+                </div>
 
+                <!-- Pista 3 (Deshabilitada hasta mostrar Pista 2) -->
+                <div>
+                    <button id="btnPista3" class="btn-pista" onclick="mostrarPista(3)" disabled style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: not-allowed;">
+                        🔍 Pista 3
+                    </button>
+                    <div id="contenidoPista3" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
+                        @ViewBag.Pista3
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedor principal de la sala (Centro) -->
+            <div class="sala-contenido" style="flex: 1 1 350px; background: rgba(0, 0, 0, 0.8); padding: 40px; border-radius: 10px; border: 2px solid #FFD700;">
+                
+                <!-- Subfoto (si no es la primera ni última sala) -->
+                @if (ViewBag.Nivel > 1 && ViewBag.Nivel < 6)
+                {
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <img src="@ViewBag.RecursoUrl" alt="Pista visual" style="max-width: 100%; max-height: 250px; border-radius: 8px; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                    </div>
+                }
+
+                <!-- Formulario de respuesta -->
+                <form id="formRespuesta" method="post" action="~/api/respuesta" style="display: flex; flex-direction: column; gap: 15px;">
+                    
+                    <div>
+                        <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">Tu Respuesta:</label>
+                        <input type="text" id="respuesta" name="respuesta" required placeholder="Ingresa la respuesta aquí..." style="width: 100%; padding: 12px; border: 2px solid #FFD700; border-radius: 5px; background-color: rgba(255,255,255,0.9); font-size: 1em; box-sizing: border-box;">
+                    </div>
+
+                    <button type="submit" class="btn-enviar" style="padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; cursor: pointer; transition: background-color 0.3s;">
+                        ✓ Enviar Respuesta
+                    </button>
+                </form>
+
+                <input type="hidden" id="hiddenRespuestaCorrecta" value="@ViewBag.RespuestaCorrecta">
+                <input type="hidden" id="hiddenNivel" value="@ViewBag.Nivel">
+                <input type="hidden" id="hiddenIdSala" value="@ViewBag.Id">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    .btn-pista:hover:not(:disabled) {
+        background-color: #FFC700 !important;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(255,215,0,0.8);
+    }
+
+    .btn-pista:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-enviar:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(40,167,68,0.5);
+    }
+
+    input[type="text"]:focus {
+        outline: none;
+        border-color: #FFD700;
+        box-shadow: 0 0 5px rgba(255,215,0,0.5);
+        background-color: white;
+    }
+</style>
+
+<script>
+    let pistasMostradas = {
+        1: false,
+        2: false,
+        3: false
+    };
+
+    function mostrarPista(numeroPista) {
+        const contenido = document.getElementById(`contenidoPista${numeroPista}`);
+        const btn = document.getElementById(`btnPista${numeroPista}`);
+        
+        // Mostrar u ocultar la pista
+        if (contenido.style.display === 'none') {
+            contenido.style.display = 'block';
+            pistasMostradas[numeroPista] = true;
+            btn.textContent = `🔍 Pista ${numeroPista} (Mostrada)`;
+            btn.style.backgroundColor = '#FFD700';
+            btn.style.color = 'black';
+            
+            // Habilitar siguiente pista si existe
+            if (numeroPista < 3) {
+                const btnSiguiente = document.getElementById(`btnPista${numeroPista + 1}`);
+                btnSiguiente.disabled = false;
+                btnSiguiente.style.backgroundColor = '#FFD700';
+                btnSiguiente.style.color = 'black';
+                btnSiguiente.style.cursor = 'pointer';
+            }
+        } else {
+            contenido.style.display = 'none';
+            pistasMostradas[numeroPista] = false;
+            btn.textContent = `🔍 Pista ${numeroPista}`;
+            btn.style.backgroundColor = '#FFD700';
+            btn.style.color = 'black';
+        }
+    }
+
+    // Validar respuesta
+    document.getElementById('formRespuesta').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const respuestaUsuario = document.getElementById('respuesta').value.trim().toLowerCase();
+        const respuestaCorrecta = document.getElementById('hiddenRespuestaCorrecta').value.trim().toLowerCase();
+        
+        if (respuestaUsuario === respuestaCorrecta) {
+            alert('¡Correcto! Pasaste a la siguiente sala.');
+            // Aquí iría la lógica para pasar a la siguiente sala
+            // window.location.href = '/Sala/Siguiente';
+        } else {
+            alert('Respuesta incorrecta. Intenta de nuevo o revisa las pistas.');
+            document.getElementById('respuesta').value = '';
+            document.getElementById('respuesta').focus();
+        }
+    });
+</script>

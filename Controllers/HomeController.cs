@@ -13,25 +13,55 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    public IActionResult Index()
+public IActionResult Index()
+{
+    BD miBd = new BD();
+    miBd.CrearPartida();
+    int partidaId = miBd.GetUltimaPartidaId();
+    HttpContext.Session.SetInt32("PartidaId", partidaId);
+    
+    Salas? salaActual = miBd.GetSalaActual(partidaId);
+    if(salaActual == null)
     {
-        BD miBd = new BD();
-        miBd.CrearPartida(); // método Dapper para crear una nueva partida
-        int partidaId = miBd.GetUltimaPartidaId(); // método Dapper para obtener el ID de la última partida creada
-        HttpContext.Session.SetInt32("PartidaId", partidaId); // Guardar el ID de la partida en la sesión
-        Salas salaActual = miBd.GetSalaActual(partidaId);   // método Dapper
-        Recurso recurso = miBd.GetRecurso(salaActual.IdRecurso); // método Dapper para obtener el recurso asociado a la sala actual
-        ViewBag.Id = salaActual.IdSalas;
-        ViewBag.Nombre = salaActual.Nombre;
-        ViewBag.Nivel = salaActual.Nivel;
-        ViewBag.RespuestaCorrecta = salaActual.RespuestaCorrecta;
-        ViewBag.Pista1 = salaActual.Pista1;
-        ViewBag.Pista2 = salaActual.Pista2;
-        ViewBag.Pista3 = salaActual.Pista3;
-        ViewBag.RecursoUrl = recurso.RecursoUrl;
-        ViewBag.TipoRecurso = recurso.TipoRecurso;
-        return View();
+        miBd.CrearSxP(0, partidaId, true);
+        salaActual = miBd.GetSalaActual(partidaId);
     }
+    
+    List<int>? recursosIds = miBd.GetIdRecursoByIdSala(salaActual.IdSalas);
+    if(recursosIds == null || recursosIds.Count == 0)
+    {
+        return BadRequest("No hay recursos asociados a esta sala");
+    }
+    
+    Recurso? recurso1 = miBd.GetRecurso(recursosIds[0]);
+    if(recurso1 == null)
+    {
+        return BadRequest("Recurso 1 no encontrado");
+    }
+    
+    ViewBag.RecursoUrl1 = recurso1.RecursoUrl;
+    ViewBag.TipoRecurso1 = recurso1.TipoRecurso;
+    
+    if(recursosIds.Count > 1)
+    {
+        Recurso? recurso2 = miBd.GetRecurso(recursosIds[1]);
+        if(recurso2 != null)
+        {
+            ViewBag.RecursoUrl2 = recurso2.RecursoUrl;
+            ViewBag.TipoRecurso2 = recurso2.TipoRecurso;
+        }
+    }
+    
+    ViewBag.Id = salaActual.IdSalas;
+    ViewBag.Nombre = salaActual.Nombre;
+    ViewBag.Nivel = salaActual.Nivel;
+    ViewBag.RespuestaCorrecta = salaActual.RespuestaCorrecta;
+    ViewBag.Pista1 = salaActual.Pista1;
+    ViewBag.Pista2 = salaActual.Pista2;
+    ViewBag.Pista3 = salaActual.Pista3;
+    
+    return View();
+}
 
     public IActionResult Privacy()
     {

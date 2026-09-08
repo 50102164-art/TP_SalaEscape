@@ -9,7 +9,7 @@ public class BD{
     {
         using (var connection = new SqlConnection(_connectionString))
         {
-            var query = "SELECT * FROM Salas s INNER JOIN Salas_X_Partidas sxp ON s.idSalas = sxp.idSalas WHERE sxp.idPartidas = @IdPartida AND sxp.SalaActual = 1";
+            var query = "SELECT * FROM Salas s INNER JOIN Salas_X_Partidas sxp ON s.idSalas = sxp.idSalas WHERE sxp.idPartidas = @IdPartida";
             return connection.QueryFirstOrDefault<Salas>(query, new { IdPartida = idPartida });
         }
     }
@@ -36,10 +36,19 @@ public class BD{
     {
         using (var connection = new SqlConnection(_connectionString))
         {
-            var query = "INSERT INTO Partidas (Tiempo, Errores, PistasSolicitadas) VALUES (0, 0, 0)";
+            var query = "INSERT INTO Partidas (Errores, PistasSolicitadas) VALUES (0, 0)";
             connection.Execute(query);
         }
         return GetUltimaPartidaId();
+    }
+
+    public void CrearSxP(int idPartidas, int idSalas = 1, bool salaActual = true)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var query = "INSERT INTO Salas_X_Partidas (IdSalas, IdPartidas, SalaActual) VALUES (@IdSalas, @IdPartidas, @SalaActual)";
+            connection.Execute(query, new { IdSalas = idSalas, IdPartidas = idPartidas, SalaActual = salaActual });
+        }
     }
 
     public int GetUltimaPartidaId()
@@ -66,6 +75,16 @@ public class BD{
         {
             var query = "INSERT INTO Jugadores (IdJugadores, IdPartidas, Nombre) VALUES (@idJugador, @idPartida, @nombreJugador)";
             connection.Execute(query, new { idJugador = idJugador, idPartida = idPartida, nombreJugador = nombreJugador });
+        }
+    }
+
+    //Método para obtener los ids de los recursos asociados a la sala actual teniendo en cuenta que hay SalasXRecursos que relacionan las salas con los recursos ya que una sala puede tener varios recursos y un recurso puede estar en varias salas. Tene en cuenta que no solo se devuelva el primero recurso sino en la segunda vez el segundo. O sea no pongas queryfirstordefault sino que devuelvas una lista de recursos y luego en el controller que se obtenga el primero y el segundo recurso.
+    public List<int> GetIdRecursoByIdSala(int idSala)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var query = "SELECT idRecurso FROM Salas_X_Recursos WHERE idSalas = @idSala";
+            return connection.Query<int>(query, new { idSala = idSala }).ToList();
         }
     }
 }
