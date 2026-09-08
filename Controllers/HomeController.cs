@@ -13,17 +13,17 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-public IActionResult Index()
+    public IActionResult Index()
 {
     BD miBd = new BD();
-    miBd.CrearPartida();
-    int partidaId = miBd.GetUltimaPartidaId();
+    int partidaId = miBd.CrearPartida();
     HttpContext.Session.SetInt32("PartidaId", partidaId);
-    
+    //Método para establecer salaActual = 0 si no hay salaActual y establecer salaActual = 1 en la siguiente sala de la partida. O sea que si no hay sala actual se establece la primera sala de la partida como sala actual y si ya hay una sala actual se establece la siguiente sala de la partida como sala actual.
+ 
     Salas? salaActual = miBd.GetSalaActual(partidaId);
     if(salaActual == null)
     {
-        miBd.CrearSxP(0, partidaId, true);
+        miBd.CrearSxP(partidaId);
         salaActual = miBd.GetSalaActual(partidaId);
     }
     
@@ -63,7 +63,7 @@ public IActionResult Index()
     return View();
 }
 
-    public IActionResult Privacy()
+    public IActionResult Historia()
     {
         return View();
     }

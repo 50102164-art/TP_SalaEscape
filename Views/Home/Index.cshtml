@@ -16,41 +16,45 @@
         </div>
 
         <!-- Contenedor de pistas (lado izquierdo) -->
-        <div style="display: flex; gap: 40px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
-            
-            <div class="pistas-section" style="flex: 0 1 250px; background: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px; border-left: 4px solid #FFD700;">
-                <h3 style="color: #FFD700; margin-top: 0; text-align: center;">PISTAS</h3>
+        @if (ViewBag.Nivel > 0 && ViewBag.Nivel < 6)
+        {
+            <div style="display: flex; gap: 40px; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;">
                 
-                <!-- Pista 1 -->
-                <div style="margin-bottom: 15px;">
-                    <button id="btnPista1" class="btn-pista" onclick="mostrarPista(1)" style="width: 100%; padding: 10px; background-color: #FFD700; color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                        🔍 Pista 1
-                    </button>
-                    <div id="contenidoPista1" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
-                        @ViewBag.Pista1
+                <section class="pistas-section" style="flex: 0 1 250px; background: rgba(0, 0, 0, 0.7); padding: 20px; border-radius: 10px; border-left: 4px solid #FFD700;">
+                    <h3 style="color: #FFD700; margin-top: 0; text-align: center;">PISTAS</h3>
+                    
+                    <!-- Pista 1 -->
+                    <div style="margin-bottom: 15px;">
+                        <button id="btnPista1" class="btn-pista" onclick="mostrarPista(1)" style="width: 100%; padding: 10px; background-color: #FFD700; color: black; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+                            🔍 Pista 1
+                        </button>
+                        <div id="contenidoPista1" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
+                            @ViewBag.Pista1
+                        </div>
                     </div>
-                </div>
 
-                <!-- Pista 2 (Deshabilitada hasta mostrar Pista 1) -->
-                <div style="margin-bottom: 15px;">
-                    <button id="btnPista2" class="btn-pista" onclick="mostrarPista(2)" disabled style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: not-allowed;">
-                        🔍 Pista 2
-                    </button>
-                    <div id="contenidoPista2" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
-                        @ViewBag.Pista2
+                    <!-- Pista 2 (Deshabilitada hasta mostrar Pista 1) -->
+                    <div style="margin-bottom: 15px;">
+                        <button id="btnPista2" class="btn-pista" onclick="mostrarPista(2)" disabled style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: not-allowed;">
+                            🔍 Pista 2
+                        </button>
+                        <div id="contenidoPista2" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
+                            @ViewBag.Pista2
+                        </div>
                     </div>
-                </div>
 
-                <!-- Pista 3 (Deshabilitada hasta mostrar Pista 2) -->
-                <div>
-                    <button id="btnPista3" class="btn-pista" onclick="mostrarPista(3)" disabled style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: not-allowed;">
-                        🔍 Pista 3
-                    </button>
-                    <div id="contenidoPista3" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
-                        @ViewBag.Pista3
+                    <!-- Pista 3 (Deshabilitada hasta mostrar Pista 2) -->
+                    <div>
+                        <button id="btnPista3" class="btn-pista" onclick="mostrarPista(3)" disabled style="width: 100%; padding: 10px; background-color: #999; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: not-allowed;">
+                            🔍 Pista 3
+                        </button>
+                        <div id="contenidoPista3" style="display: none; margin-top: 10px; color: white; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px; font-size: 0.9em; line-height: 1.5;">
+                            @ViewBag.Pista3
+                        </div>
                     </div>
-                </div>
+                </section>
             </div>
+        }
 
             <!-- Contenedor principal de la sala (Centro) -->
             <div class="sala-contenido" style="flex: 1 1 350px; background: rgba(0, 0, 0, 0.8); padding: 40px; border-radius: 10px; border: 2px solid #FFD700;">
@@ -67,8 +71,8 @@
                 <form id="formRespuesta" method="post" action="~/api/respuesta" style="display: flex; flex-direction: column; gap: 15px;">
                     
                     <div>
-                        <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">Tu Respuesta:</label>
-                        <input type="text" id="respuesta" name="respuesta" required placeholder="Ingresa la respuesta aquí..." style="width: 100%; padding: 12px; border: 2px solid #FFD700; border-radius: 5px; background-color: rgba(255,255,255,0.9); font-size: 1em; box-sizing: border-box;">
+                        <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">@if(ViewBag.Nivel == 0) {Su nombre en esta experiencia:} else {Tu Respuesta:}</label>
+                        <input type="text" id="respuesta" name="respuesta" required placeholder="Escribe aquí..." style="width: 100%; padding: 12px; border: 2px solid #FFD700; border-radius: 5px; background-color: rgba(255,255,255,0.9); font-size: 1em; box-sizing: border-box;">
                     </div>
 
                     <button type="submit" class="btn-enviar" style="padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; cursor: pointer; transition: background-color 0.3s;">

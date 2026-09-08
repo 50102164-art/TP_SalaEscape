@@ -5,10 +5,11 @@
 
 function verificarCondiciones(){
     const respuesta = document.getElementById("respuesta")?.value.trim();
+    const nivel = document.getElementById("nivel")?.value.trim();
 
-    if(respuesta === "clave_correcta"){
+    if(nivel === "0" && respuesta != "" || respuesta === "clave_correcta"){
         return true;
-    } 
+    }
     else {
         if(respuesta === "-")
             alert("Por favor, ingrese una respuesta.");
@@ -17,6 +18,8 @@ function verificarCondiciones(){
 
         return false;
     }
+
+    
 }
 
 function cambiarFondo() {

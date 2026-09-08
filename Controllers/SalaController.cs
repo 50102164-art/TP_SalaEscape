@@ -23,7 +23,7 @@ public class SalaController : Controller
     Salas? salaActual = miBd.GetSalaActual(partidaId);
     if(salaActual == null)
     {
-        miBd.CrearSxP(0, partidaId, true);
+        miBd.CrearSxP(partidaId);
         salaActual = miBd.GetSalaActual(partidaId);
     }
     

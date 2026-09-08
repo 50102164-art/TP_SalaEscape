@@ -18,7 +18,7 @@ public class BD{
     {
         using (var connection = new SqlConnection(_connectionString))
         {
-            var query = "SELECT * FROM Recursos WHERE idRecurso = @IdRecurso";
+            var query = "SELECT * FROM Recurso WHERE idRecurso = @IdRecurso";
             return connection.QueryFirstOrDefault<Recurso>(query, new { IdRecurso = idRecurso });
         }
     }
@@ -47,7 +47,7 @@ public class BD{
         using (var connection = new SqlConnection(_connectionString))
         {
             var query = "INSERT INTO Salas_X_Partidas (IdSalas, IdPartidas, SalaActual) VALUES (@IdSalas, @IdPartidas, @SalaActual)";
-            connection.Execute(query, new { IdSalas = idSalas, IdPartidas = idPartidas, SalaActual = salaActual });
+            connection.Execute(query, new { IdPartidas = idPartidas, IdSalas = idSalas, SalaActual = salaActual });
         }
     }
 
@@ -83,7 +83,7 @@ public class BD{
     {
         using (var connection = new SqlConnection(_connectionString))
         {
-            var query = "SELECT idRecurso FROM Salas_X_Recursos WHERE idSalas = @idSala";
+            var query = "SELECT idRecurso FROM SalasXRecursos WHERE idSalas = @idSala";
             return connection.Query<int>(query, new { idSala = idSala }).ToList();
         }
     }

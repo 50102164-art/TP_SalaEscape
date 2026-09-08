@@ -22,4 +22,9 @@ public class Salas
         Pista2 = pista2;
         Pista3 = pista3;
     }
+
+    //Constructor vacío
+    public Salas(){
+        
+    }
 }
