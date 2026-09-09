@@ -9,7 +9,7 @@ public class BD{
     {
         using (var connection = new SqlConnection(_connectionString))
         {
-            var query = "SELECT * FROM Salas s INNER JOIN Salas_X_Partidas sxp ON s.idSalas = sxp.idSalas WHERE sxp.idPartidas = @IdPartida";
+            var query = "SELECT s.* FROM Salas s INNER JOIN Salas_X_Partidas sxp ON s.idSalas = sxp.idSalas WHERE sxp.idPartidas = @IdPartida AND sxp.SalaActual = 1";
             return connection.QueryFirstOrDefault<Salas>(query, new { IdPartida = idPartida });
         }
     }
@@ -85,6 +85,24 @@ public class BD{
         {
             var query = "SELECT idRecurso FROM SalasXRecursos WHERE idSalas = @idSala";
             return connection.Query<int>(query, new { idSala = idSala }).ToList();
+        }
+    }
+
+    public Salas GetSalaByNivel(int nivel)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var query = "SELECT TOP 1 * FROM Salas WHERE Nivel = @Nivel ORDER BY IdSalas";
+            return connection.QueryFirstOrDefault<Salas>(query, new { Nivel = nivel });
+        }
+    }
+
+    public void MarcarSalaActualFalse(int idPartida)
+    {
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            var query = "UPDATE Salas_X_Partidas SET SalaActual = 0 WHERE IdPartidas = @IdPartida AND SalaActual = 1";
+            connection.Execute(query, new { IdPartida = idPartida });
         }
     }
 }

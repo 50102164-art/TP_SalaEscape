@@ -1,9 +1,34 @@
 @{
     ViewData["Title"] = ViewBag.Nombre ?? "Sala";
+
+    string mainRecurso = "";
+    if (ViewBag.RecursoUrl != null)
+    {
+        mainRecurso = ViewBag.RecursoUrl;
+    }
+
+    string subRecurso = "";
+    if (ViewBag.RecursoSubUrl != null)
+    {
+        subRecurso = ViewBag.RecursoSubUrl;
+    }
+
+    string subSrc = subRecurso;
+    if (string.IsNullOrEmpty(subSrc))
+    {
+        subSrc = mainRecurso;
+    }
+
+    bool tieneFondo = ViewBag.Nivel != null && ViewBag.Nivel != 0 && ViewBag.Nivel != 6;
+    string fondoStyle = "min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; position: relative; background-color: rgba(0,0,0,0.4);";
+
+    if (tieneFondo)
+    {
+        fondoStyle = "background-image: url('" + mainRecurso + "'); background-size: cover; background-position: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; position: relative;";
+    }
 }
 
-<div class="sala-container" style="background-image: url('@ViewBag.RecursoUrl'); background-size: cover; background-position: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; position: relative;">
-    
+<div class="sala-container" style="@fondoStyle">
     <!-- Overlay oscuro para mejor legibilidad -->
     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.4);"></div>
     
@@ -63,15 +88,20 @@
                 @if (ViewBag.Nivel > 1 && ViewBag.Nivel < 6)
                 {
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <img src="@ViewBag.RecursoUrl" alt="Pista visual" style="max-width: 100%; max-height: 250px; border-radius: 8px; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                        <img src="@subSrc" alt="Pista visual" style="max-width: 100%; max-height: 250px; border-radius: 8px; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.5);">
                     </div>
                 }
 
                 <!-- Formulario de respuesta -->
-                <form id="formRespuesta" method="post" action="~/api/respuesta" style="display: flex; flex-direction: column; gap: 15px;">
+                <form id="formRespuesta" method="post" action="/Sala/Respuesta" style="display: flex; flex-direction: column; gap: 15px;">
                     
                     <div>
-                        <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">@if(ViewBag.Nivel == 0) {Su nombre en esta experiencia:} else {Tu Respuesta:}</label>
+                        @if(ViewBag.Nivel == 0) {
+                        <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">Su nombre en esta experiencia:</label>
+                        }
+                        else{
+                        <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">Tu Respuesta:</label>
+                        }
                         <input type="text" id="respuesta" name="respuesta" required placeholder="Escribe aquí..." style="width: 100%; padding: 12px; border: 2px solid #FFD700; border-radius: 5px; background-color: rgba(255,255,255,0.9); font-size: 1em; box-sizing: border-box;">
                     </div>
 
@@ -120,57 +150,4 @@
     }
 </style>
 
-<script>
-    let pistasMostradas = {
-        1: false,
-        2: false,
-        3: false
-    };
 
-    function mostrarPista(numeroPista) {
-        const contenido = document.getElementById(`contenidoPista${numeroPista}`);
-        const btn = document.getElementById(`btnPista${numeroPista}`);
-        
-        // Mostrar u ocultar la pista
-        if (contenido.style.display === 'none') {
-            contenido.style.display = 'block';
-            pistasMostradas[numeroPista] = true;
-            btn.textContent = `🔍 Pista ${numeroPista} (Mostrada)`;
-            btn.style.backgroundColor = '#FFD700';
-            btn.style.color = 'black';
-            
-            // Habilitar siguiente pista si existe
-            if (numeroPista < 3) {
-                const btnSiguiente = document.getElementById(`btnPista${numeroPista + 1}`);
-                btnSiguiente.disabled = false;
-                btnSiguiente.style.backgroundColor = '#FFD700';
-                btnSiguiente.style.color = 'black';
-                btnSiguiente.style.cursor = 'pointer';
-            }
-        } else {
-            contenido.style.display = 'none';
-            pistasMostradas[numeroPista] = false;
-            btn.textContent = `🔍 Pista ${numeroPista}`;
-            btn.style.backgroundColor = '#FFD700';
-            btn.style.color = 'black';
-        }
-    }
-
-    // Validar respuesta
-    document.getElementById('formRespuesta').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const respuestaUsuario = document.getElementById('respuesta').value.trim().toLowerCase();
-        const respuestaCorrecta = document.getElementById('hiddenRespuestaCorrecta').value.trim().toLowerCase();
-        
-        if (respuestaUsuario === respuestaCorrecta) {
-            alert('¡Correcto! Pasaste a la siguiente sala.');
-            // Aquí iría la lógica para pasar a la siguiente sala
-            // window.location.href = '/Sala/Siguiente';
-        } else {
-            alert('Respuesta incorrecta. Intenta de nuevo o revisa las pistas.');
-            document.getElementById('respuesta').value = '';
-            document.getElementById('respuesta').focus();
-        }
-    });
-</script>

@@ -13,15 +13,57 @@ public class SalaController : Controller
         _logger = logger;
     }
 
+    private string ObtenerUrlRecurso(string nombreRecurso)
+    {
+        if (string.IsNullOrWhiteSpace(nombreRecurso))
+        {
+            return "/Images/ForrestConCorona.jfif";
+        }
+
+        string nombre = nombreRecurso.ToLower();
+
+        if (nombre.Contains("ping"))
+        {
+            return "/Images/PingPong.jfif";
+        }
+
+        if (nombre.Contains("jenny") || nombre.Contains("fotojenny"))
+        {
+            return "/Images/FotoJenny.jfif";
+        }
+
+        if (nombre.Contains("shit") || nombre.Contains("happens"))
+        {
+            return "/Images/ForrestShitHappens.jfif";
+        }
+
+        if (nombre.Contains("corona") || nombre.Contains("forrestcon") || nombre.Contains("forrest") || nombre.Contains("pluma"))
+        {
+            return "/Images/ForrestConCorona.jfif";
+        }
+
+        if (nombre.Contains("cerebro") || nombre.Contains("cerebero"))
+        {
+            return "/Images/Cerebero.jfif";
+        }
+
+        return "/Images/" + nombreRecurso;
+    }
+
     public IActionResult Index()
-{
-    BD miBd = new BD();
-    int partidaId = miBd.CrearPartida();
-    HttpContext.Session.SetInt32("PartidaId", partidaId);
+    {
+        BD miBd = new BD();
+        int partidaId = HttpContext.Session.GetInt32("PartidaId") ?? 0;
+        if (partidaId == 0)
+        {
+            int nueva = miBd.CrearPartida();
+            HttpContext.Session.SetInt32("PartidaId", nueva);
+            partidaId = nueva;
+        }
     //Método para establecer salaActual = 0 si no hay salaActual y establecer salaActual = 1 en la siguiente sala de la partida. O sea que si no hay sala actual se establece la primera sala de la partida como sala actual y si ya hay una sala actual se establece la siguiente sala de la partida como sala actual.
  
-    Salas? salaActual = miBd.GetSalaActual(partidaId);
-    if(salaActual == null)
+    Salas salaActual = miBd.GetSalaActual(partidaId);
+    if (salaActual == null)
     {
         miBd.CrearSxP(partidaId);
         salaActual = miBd.GetSalaActual(partidaId);
@@ -38,16 +80,16 @@ public class SalaController : Controller
     {
         return BadRequest("Recurso 1 no encontrado");
     }
-    
-    ViewBag.RecursoUrl1 = recurso1.RecursoUrl;
+
+    ViewBag.RecursoUrl = ObtenerUrlRecurso(recurso1.RecursoUrl);
     ViewBag.TipoRecurso1 = recurso1.TipoRecurso;
-    
+
     if(recursosIds.Count > 1)
     {
         Recurso? recurso2 = miBd.GetRecurso(recursosIds[1]);
         if(recurso2 != null)
         {
-            ViewBag.RecursoUrl2 = recurso2.RecursoUrl;
+            ViewBag.RecursoSubUrl = ObtenerUrlRecurso(recurso2.RecursoUrl);
             ViewBag.TipoRecurso2 = recurso2.TipoRecurso;
         }
     }
@@ -60,8 +102,64 @@ public class SalaController : Controller
     ViewBag.Pista2 = salaActual.Pista2;
     ViewBag.Pista3 = salaActual.Pista3;
     
-    return View();
+    // Usar la vista ubicada en Views/Home/Index.cshtml
+    return View("~/Views/Home/Index.cshtml");
 }
+
+    [HttpPost]
+    public IActionResult Respuesta([FromForm] string respuesta)
+    {
+        BD miBd = new BD();
+        int partidaId = HttpContext.Session.GetInt32("PartidaId") ?? 0;
+        if (partidaId == 0)
+        {
+            // Si no hay partida, crear una y volver a index
+            int nueva = miBd.CrearPartida();
+            HttpContext.Session.SetInt32("PartidaId", nueva);
+            return RedirectToAction("Index");
+        }
+
+        miBd.GuardarRespuesta(partidaId, respuesta ?? string.Empty);
+
+        Salas salaActual = miBd.GetSalaActual(partidaId);
+        if (salaActual == null)
+            return RedirectToAction("Index");
+
+        // Comparar ignorando mayúsculas
+        // Si estamos en la sala 0, aceptamos cualquier respuesta no vacía como nombre y avanzamos
+        if (salaActual.Nivel == 0)
+        {
+            if (!string.IsNullOrWhiteSpace(respuesta))
+            {
+                Salas siguiente = miBd.GetSalaByNivel(salaActual.Nivel + 1);
+                if (siguiente != null)
+                {
+                    miBd.MarcarSalaActualFalse(partidaId);
+                    miBd.CrearSxP(partidaId, siguiente.IdSalas, true);
+                }
+                return RedirectToAction("Index");
+            }
+            // Si nombre vacío, volver a la sala 0
+            return RedirectToAction("Index");
+        }
+
+        // Para salas > 0, comparar respuesta correcta
+        if (!string.IsNullOrEmpty(salaActual.RespuestaCorrecta) &&
+            string.Equals(salaActual.RespuestaCorrecta.Trim(), (respuesta ?? string.Empty).Trim(), StringComparison.OrdinalIgnoreCase))
+        {
+            Salas siguiente = miBd.GetSalaByNivel(salaActual.Nivel + 1);
+            if (siguiente != null)
+            {
+                miBd.MarcarSalaActualFalse(partidaId);
+                miBd.CrearSxP(partidaId, siguiente.IdSalas, true);
+            }
+            // Avanzamos (o terminamos si no hay siguiente)
+            return RedirectToAction("Index");
+        }
+
+        // Respuesta incorrecta -> volver a la misma sala
+        return RedirectToAction("Index");
+    }
 
     public IActionResult ReinciarJuego()
     {
