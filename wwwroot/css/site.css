@@ -36,3 +36,34 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.btn-pista:hover:not(:disabled) {
+    background-color: #FFC700 !important;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255,215,0,0.8);
+}
+
+.btn-pista:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-enviar:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(40,167,68,0.5);
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: #FFD700;
+    box-shadow: 0 0 5px rgba(255,215,0,0.5);
+    background-color: white;
+}
+

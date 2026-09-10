@@ -13,24 +13,26 @@
         subRecurso = ViewBag.RecursoSubUrl;
     }
 
-    string subSrc = subRecurso;
-    if (string.IsNullOrEmpty(subSrc))
-    {
-        subSrc = mainRecurso;
-    }
-
-    bool tieneFondo = ViewBag.Nivel != null && ViewBag.Nivel != 0 && ViewBag.Nivel != 6;
+    bool tieneFondo = ViewBag.Nivel != null && !string.IsNullOrEmpty(mainRecurso);
     string fondoStyle = "min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; position: relative; background-color: rgba(0,0,0,0.4);";
 
     if (tieneFondo)
     {
         fondoStyle = "background-image: url('" + mainRecurso + "'); background-size: cover; background-position: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px; position: relative;";
     }
+
+    bool esFinal = ViewBag.Nivel == 6;
+    if (esFinal && !string.IsNullOrEmpty(mainRecurso))
+    {
+        fondoStyle = "background-image: url('" + mainRecurso + "'); background-size: cover; background-position: center; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; position: relative;";
+    }
 }
 
 <div class="sala-container" style="@fondoStyle">
     <!-- Overlay oscuro para mejor legibilidad -->
     <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.4);"></div>
+    
+   
     
     <div style="position: relative; z-index: 10; width: 100%; max-width: 900px;">
         
@@ -84,31 +86,45 @@
             <!-- Contenedor principal de la sala (Centro) -->
             <div class="sala-contenido" style="flex: 1 1 350px; background: rgba(0, 0, 0, 0.8); padding: 40px; border-radius: 10px; border: 2px solid #FFD700;">
                 
-                <!-- Subfoto (si no es la primera ni última sala) -->
-                @if (ViewBag.Nivel > 1 && ViewBag.Nivel < 6)
+                <!-- Subfoto (si no es la primera ni última sala y tiene imagen secundaria) -->
+                @if (ViewBag.Nivel >= 1 && ViewBag.Nivel < 6 && !string.IsNullOrEmpty(ViewBag.RecursoSubUrl))
                 {
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <img src="@subSrc" alt="Pista visual" style="max-width: 100%; max-height: 250px; border-radius: 8px; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                        <img src="@ViewBag.RecursoSubUrl" alt="Pista visual" style="max-width: 100%; max-height: 250px; border-radius: 8px; border: 2px solid #FFD700; box-shadow: 0 0 10px rgba(255,215,0,0.5);">
                     </div>
                 }
 
+                
+
                 <!-- Formulario de respuesta -->
-                <form id="formRespuesta" method="post" action="/Sala/Respuesta" style="display: flex; flex-direction: column; gap: 15px;">
+                @if (esFinal)
+                {
+                    <div style="text-align: center; color: #FFD700;">
+                        <h2 style="font-size: 3em; margin: 0 0 20px 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.7);">¡GANASTE! 🎉</h2>
+                        <p style="font-size: 1.3em; margin: 0; opacity: 0.9;">¡Felicidades por completar la sala de escape!</p>
+                    </div>
+                }
+                else
+                {
+                <form id="formRespuesta" method="post" action = "Home", "Index" style="display: flex; flex-direction: column; gap: 15px;">
                     
                     <div>
                         @if(ViewBag.Nivel == 0) {
                         <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">Su nombre en esta experiencia:</label>
+                        <input type="text" id="respuesta" name="nombre" required placeholder="Escribe aquí..." style="width: 100%; padding: 12px; border: 2px solid #FFD700; border-radius: 5px; background-color: rgba(255,255,255,0.9); font-size: 1em; box-sizing: border-box;">
                         }
                         else{
                         <label for="respuesta" style="color: #FFD700; font-weight: bold; display: block; margin-bottom: 8px;">Tu Respuesta:</label>
-                        }
                         <input type="text" id="respuesta" name="respuesta" required placeholder="Escribe aquí..." style="width: 100%; padding: 12px; border: 2px solid #FFD700; border-radius: 5px; background-color: rgba(255,255,255,0.9); font-size: 1em; box-sizing: border-box;">
+                        }
+                        
                     </div>
 
                     <button type="submit" class="btn-enviar" style="padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; cursor: pointer; transition: background-color 0.3s;">
                         ✓ Enviar Respuesta
                     </button>
                 </form>
+                }
 
                 <input type="hidden" id="hiddenRespuestaCorrecta" value="@ViewBag.RespuestaCorrecta">
                 <input type="hidden" id="hiddenNivel" value="@ViewBag.Nivel">
@@ -118,36 +134,6 @@
     </div>
 </div>
 
-<style>
-    body, html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-    }
 
-    .btn-pista:hover:not(:disabled) {
-        background-color: #FFC700 !important;
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(255,215,0,0.8);
-    }
-
-    .btn-pista:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
-    .btn-enviar:hover {
-        background-color: #218838;
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(40,167,68,0.5);
-    }
-
-    input[type="text"]:focus {
-        outline: none;
-        border-color: #FFD700;
-        box-shadow: 0 0 5px rgba(255,215,0,0.5);
-        background-color: white;
-    }
-</style>
 
 

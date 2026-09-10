@@ -37,7 +37,22 @@ public class SalaController : Controller
             return "/Images/ForrestShitHappens.jfif";
         }
 
-        if (nombre.Contains("corona") || nombre.Contains("forrestcon") || nombre.Contains("forrest") || nombre.Contains("pluma"))
+        if (nombre.Contains("pluma"))
+        {
+            return "/Images/PlumaForrestGump.jpg";
+        }
+
+        if (nombre.Contains("Escapando") || nombre.Contains("forrestescapando"))
+        {
+            return "/Images/ForrestEscapando.jpg";
+        }
+
+        if (nombre.Contains("abc") || nombre.Contains("numero"))
+        {
+            return "/Images/AbcNumero.jpg";
+        }
+
+        if (nombre.Contains("corona") || nombre.Contains("forrestcon") || nombre.Contains("forrest"))
         {
             return "/Images/ForrestConCorona.jfif";
         }
@@ -48,6 +63,15 @@ public class SalaController : Controller
         }
 
         return "/Images/" + nombreRecurso;
+    }
+
+    private bool EsSalaEspecial(string nombreRecurso)
+    {
+        if (string.IsNullOrWhiteSpace(nombreRecurso))
+            return false;
+
+        string nombre = nombreRecurso.ToLower();
+        return nombre.Contains("corona") || nombre.Contains("pluma");
     }
 
     public IActionResult Index()
@@ -69,6 +93,29 @@ public class SalaController : Controller
         salaActual = miBd.GetSalaActual(partidaId);
     }
     
+    ViewBag.Id = salaActual.IdSalas;
+    ViewBag.Nombre = salaActual.Nombre;
+    ViewBag.Nivel = salaActual.Nivel;
+    ViewBag.RespuestaCorrecta = salaActual.RespuestaCorrecta;
+    ViewBag.Pista1 = salaActual.Pista1;
+    ViewBag.Pista2 = salaActual.Pista2;
+    ViewBag.Pista3 = salaActual.Pista3;
+
+    // Nivel 0 no tiene recursos en la BD, pero mostrar imagen de la pluma
+    if (salaActual.Nivel == 0)
+    {
+        ViewBag.RecursoUrl = "/Images/PlumaForrestGump.jpg"; // Imagen de pluma
+        return View("~/Views/Home/Index.cshtml");
+    }
+
+    // Nivel 6 es el nivel final (sin recursos)
+    if (salaActual.Nivel == 6)
+    {
+        ViewBag.RecursoUrl = "/Images/ForrestConCorona.jfif";
+        return View("~/Views/Home/Index.cshtml");
+    }
+
+    // Para niveles 1-5, cargar recursos
     List<int>? recursosIds = miBd.GetIdRecursoByIdSala(salaActual.IdSalas);
     if(recursosIds == null || recursosIds.Count == 0)
     {
@@ -84,7 +131,8 @@ public class SalaController : Controller
     ViewBag.RecursoUrl = ObtenerUrlRecurso(recurso1.RecursoUrl);
     ViewBag.TipoRecurso1 = recurso1.TipoRecurso;
 
-    if(recursosIds.Count > 1)
+    // Solo mostrar imagen chica si no es sala especial (corona or pluma)
+    if(recursosIds.Count > 1 && !EsSalaEspecial(recurso1.RecursoUrl))
     {
         Recurso? recurso2 = miBd.GetRecurso(recursosIds[1]);
         if(recurso2 != null)
@@ -93,14 +141,6 @@ public class SalaController : Controller
             ViewBag.TipoRecurso2 = recurso2.TipoRecurso;
         }
     }
-    
-    ViewBag.Id = salaActual.IdSalas;
-    ViewBag.Nombre = salaActual.Nombre;
-    ViewBag.Nivel = salaActual.Nivel;
-    ViewBag.RespuestaCorrecta = salaActual.RespuestaCorrecta;
-    ViewBag.Pista1 = salaActual.Pista1;
-    ViewBag.Pista2 = salaActual.Pista2;
-    ViewBag.Pista3 = salaActual.Pista3;
     
     // Usar la vista ubicada en Views/Home/Index.cshtml
     return View("~/Views/Home/Index.cshtml");
@@ -123,6 +163,10 @@ public class SalaController : Controller
 
         Salas salaActual = miBd.GetSalaActual(partidaId);
         if (salaActual == null)
+            return RedirectToAction("Index");
+
+        // Si estamos en nivel 6 (final), no procesamos respuesta
+        if (salaActual.Nivel == 6)
             return RedirectToAction("Index");
 
         // Comparar ignorando mayúsculas
@@ -163,8 +207,8 @@ public class SalaController : Controller
 
     public IActionResult ReinciarJuego()
     {
-
-        return View();
+        HttpContext.Session.Remove("PartidaId");
+        return RedirectToAction("Home", "Index");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
