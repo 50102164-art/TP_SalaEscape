@@ -205,10 +205,12 @@ public class SalaController : Controller
         return RedirectToAction("Index");
     }
 
-    public IActionResult ReinciarJuego()
+    public IActionResult ReiniciarJuego()
     {
-        HttpContext.Session.Remove("PartidaId");
-        return RedirectToAction("Home", "Index");
+
+        // Limpiar la sesión, que en el lugar en que el usuario escribe la respusta no haya nada mostrado en session y que cuando quiera escribir el nombre de usuario, sí le aparezcan los sessions. Reiniciar el juego
+        HttpContext.Session.Clear();
+        return RedirectToAction("Index", "Home");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
