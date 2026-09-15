@@ -2,7 +2,17 @@
     ViewData["Title"] = ViewBag.Nombre ?? "Sala";
 
     string mainRecurso = "";
-    if (ViewBag.RecursoUrl != null)
+    if (ViewBag.RecursoUrl == "-")
+    {
+        document.getElementById('miPopup').showModal()
+        <!-- Ventana emergente -->
+        <dialog id="miPopup">
+            <h2>¡Hola!</h2>
+            <p>Este es un mensaje en una ventana pop-up usando HTML nativo.</p>
+            <button onclick="document.getElementById('miPopup').close()">Cerrar</button>
+        </dialog>
+    }
+    else if (ViewBag.RecursoUrl != null)
     {
         mainRecurso = ViewBag.RecursoUrl;
     }
@@ -103,19 +113,36 @@
                         <h2 style="font-size: 3em; margin: 0 0 20px 0; text-shadow: 2px 2px 5px rgba(0,0,0,0.7);">¡GANASTE! 🎉</h2>
                         <p style="font-size: 1.3em; margin: 0; opacity: 0.9;">¡Felicidades por completar la sala de escape!</p>
                     </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <a asp-controller="Sala" asp-action="ReiniciarJuego"
+                           style="display: inline-block; padding: 12px 24px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; font-size: 1.1em; cursor: pointer; text-decoration: none; transition: background-color 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                            🔁 Volver a jugar
+                        </a>
+                    </div>
                 }
                 else
                 {
                 <!-- Contenedor de mensajes de error -->
-                <div id="mensajeError" style="display: none; background-color: #ff6b6b; color: white; padding: 12px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-weight: bold;">
-                    ❌ Respuesta incorrecta. Intenta de nuevo.
-                </div>
+                @if (TempData["MensajeError"] != null)
+                {
+                    <div style="background-color: #ff6b6b; color: white; padding: 12px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-weight: bold;">
+                        @TempData["MensajeError"]
+                    </div>
+                }
+                else
+                {
+                    <div id="mensajeError" style="display: none; background-color: #ff6b6b; color: white; padding: 12px; border-radius: 5px; margin-bottom: 15px; text-align: center; font-weight: bold;">
+                        ❌ Respuesta incorrecta. Intenta de nuevo.
+                    </div>
+                }
                 
                 @if(ViewBag.Nivel == 0) {
                     <h2 style="color: #FFFFFF; font-size: 1.8em; margin: 20px 0; text-align: center;">Tutorial</h2>
-                    <div style="color: #FFD700; font-size: 1.4em; margin-top: 10px; text-align: center;">
+                    <div style="color: #ffffff; font-size: 1.4em; margin-top: 10px; text-align: center;">
                     
                         <p>En tu viaje por este lugar, te vas a cruzar con muchos recuerdos. Algunas veces, las imágenes te pueden ayudar mucho. Miralas bien, porque una foto puede decir más de mil palabras... y tal vez te cuenten la historia de hacia dónde tenés que correr. Pero recordá que hasta los mejores corredores necesitan un respiro o alguien que les sople el viento a favor. Otras veces, puede ser que una pista sea indispensable para pasar el nivel. No te apures, pensá con calma y administralas sabiamente para pasar la sala de la mejor forma. Las pistas son como los milagros: aparecen cuando más las necesitás, pero no hay que gastarlas todas juntas.</p>
+                        <p>No hay diferencias entre mayúsculas y minúsculas. Las respuestas <span style="font-weight: bold;">NUNCA</span> van con Espacio.</p>
                         <p>Al enviar tu nombre, comenzará la experiencia. ¡Buena suerte!</p>
                     </div>
                 }

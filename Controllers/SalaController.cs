@@ -37,11 +37,6 @@ public class SalaController : Controller
             return "/Images/ForrestShitHappens.jfif";
         }
 
-        if (nombre.Contains("pluma"))
-        {
-            return "/Images/PlumaForrestGump.jpg";
-        }
-
         if (nombre.Contains("Escapando") || nombre.Contains("forrestescapando"))
         {
             return "/Images/ForrestEscapando.jpg";
@@ -50,6 +45,13 @@ public class SalaController : Controller
         if (nombre.Contains("abc") || nombre.Contains("numero"))
         {
             return "/Images/AbcNumero.jpg";
+        }
+
+        //Implementa un if para la imagen ForrestGumpCorriendo que no se muestra en la sala 
+
+        if (nombre.Contains("corriendo") || nombre.Contains("forrestcorriendo"))
+        {
+            return "/Images/ForrestGumpCorriendo.png";
         }
 
         if (nombre.Contains("corona") || nombre.Contains("forrestcon") || nombre.Contains("forrest"))
@@ -202,6 +204,7 @@ public class SalaController : Controller
         }
 
         // Respuesta incorrecta -> volver a la misma sala
+        TempData["MensajeError"] = "❌ Respuesta incorrecta. Intenta de nuevo.";
         return RedirectToAction("Index");
     }
 
@@ -211,6 +214,12 @@ public class SalaController : Controller
         // Limpiar la sesión, que en el lugar en que el usuario escribe la respusta no haya nada mostrado en session y que cuando quiera escribir el nombre de usuario, sí le aparezcan los sessions. Reiniciar el juego
         HttpContext.Session.Clear();
         return RedirectToAction("Index", "Home");
+    }
+
+    public IActionResult QuienesSomos()
+    {
+        ViewBag.RecursoUrl = "-";
+        return View("Index", "Home");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
