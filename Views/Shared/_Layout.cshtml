@@ -20,17 +20,22 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Sala" asp-action="ReiniciarJuego"
+                            <a class="nav-link text-dark" onclick="showPopUp('dialogReiniciar')"
                                style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; border-radius: 5px; font-weight: bold; text-decoration: none; transition: background-color 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.2); margin-top: 6px;">
                                 Reiniciar Juego
                             </a>
                         </li>
                         <li class="nav-item">
-                        <!-- Botón que activa la ventana emergente -->
-                            <a class="nav-link text-dark" asp-controller="Sala" asp-action="QuienesSomos"
-                               style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; border-radius: 5px; font-weight: bold; text-decoration: none; transition: background-color 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.2); margin-top: 6px;">
+                            <button type="button" class="nav-link text-dark" onclick="showPopUp('dialogQuienesSomos')"
+                                    style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; text-decoration: none; transition: background-color 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.2); margin-top: 6px; cursor: pointer;">
                                 Quiénes somos
-                            </a>
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link text-dark" onclick="showPopUp('dialogReglas')"
+                                    style="display: inline-block; padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-weight: bold; text-decoration: none; transition: background-color 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.2); margin-top: 6px; cursor: pointer;">
+                                Reglas del juego
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -42,6 +47,38 @@
             @RenderBody()
         </main>
     </div>
+
+    <dialog id="dialogQuienesSomos" style="max-width: 600px; border: none; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
+        <h2 style="margin-top: 0;">Quiénes somos</h2>
+        <p>Esta sala de escape fue ideada y desarrollada por Uriel Uner y Ezequiel Eidelstein, estudiantes de 4to año de la especialidad Informática.</p>
+        <p>Combinando programación, lógica y creatividad, transformamos nuestra pasión por la tecnología en una experiencia interactiva y desafiante.</p>
+        <p>¡Animate a poner a prueba tus habilidades!</p>
+        
+        <button type="button" onclick="closePopUp('dialogQuienesSomos')" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Cerrar
+        </button>
+    </dialog>
+
+    <dialog id="dialogReglas" style="max-width: 600px; border: none; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
+        <h2 style="margin-top: 0;">Reglas del juego</h2>
+        <p>En tu viaje por este lugar, te vas a cruzar con muchos recuerdos. Algunas veces, las imágenes te pueden ayudar mucho. Miralas bien, porque una foto puede decir más de mil palabras... y tal vez te cuenten la historia de hacia dónde tenés que correr. Pero recordá que hasta los mejores corredores necesitan un respiro o alguien que les sople el viento a favor. Otras veces, puede ser que una pista sea indispensable para pasar el nivel. No te apures, pensá con calma y administralas sabiamente para pasar la sala de la mejor forma. Las pistas son como los milagros: aparecen cuando más las necesitás, pero no hay que gastarlas todas juntas.</p>
+        <p>No hay diferencias entre mayúsculas y minúsculas. Las respuestas <span style="font-weight: bold;">NUNCA</span> van con Espacio.</p>
+        <p>Al enviar tu nombre, comenzará la experiencia. ¡Buena suerte!</p>
+        
+        <button type="button" onclick="closePopUp('dialogReglas')" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Cerrar
+        </button>
+    </dialog>
+
+    <dialog id="dialogReiniciar" style="max-width: 600px; border: none; border-radius: 12px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
+        <h2 style="margin-top: 0;">¿Confirma la acción de reiniciar el juego?</h2>
+        <button type="button" onclick="closePopUp('dialogReiniciar'); window.location.href='@Url.Action("ReiniciarJuego", "Sala")';" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
+            Sí
+        </button>
+        <button type="button" onclick="closePopUp('dialogReiniciar')" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            No
+        </button>
+    </dialog>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

@@ -3,6 +3,20 @@
 
 // Write your JavaScript code.
 
+function showPopUp(elemId) {
+    const dialog = document.getElementById(elemId);
+    if (dialog && typeof dialog.showModal === 'function') {
+        dialog.showModal();
+    }
+}
+
+function closePopUp(elemId) {
+    const dialog = document.getElementById(elemId);
+    if (dialog && typeof dialog.close === 'function') {
+        dialog.close();
+    }
+}
+
 function verificarCondiciones(){
     const respuesta = document.getElementById("respuesta")?.value.trim();
     const nivel = document.getElementById("nivel")?.value.trim();

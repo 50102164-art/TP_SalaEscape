@@ -219,7 +219,7 @@ public class SalaController : Controller
     public IActionResult QuienesSomos()
     {
         ViewBag.RecursoUrl = "-";
-        return View("Index", "Home");
+        return RedirectToAction("Index", "Home");
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

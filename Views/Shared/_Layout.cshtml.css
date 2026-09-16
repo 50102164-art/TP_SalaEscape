@@ -23,6 +23,14 @@ a {
   border-color: #1861ac;
 }
 
+.nav-item{
+  margin-left: 1%;
+}
+
+.nav-item:first-child {
+  margin-left: 0;
+}
+
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
